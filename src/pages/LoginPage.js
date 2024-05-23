@@ -29,9 +29,10 @@ const LoginPage = () => {
     } else if (status === 'failed') {
       if (error === 'Invalid username or password') {
         setErrors({ login: 'Tài khoản hoặc mật khẩu không chính xác' });
-      } else {
-        toast.error(error);
-      }
+      } 
+    //   else {
+    //     toast.error(error);
+    //   }
     }
   }, [status, token, error, navigate]);
 

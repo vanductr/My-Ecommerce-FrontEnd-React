@@ -4,7 +4,7 @@ import { FaShoppingCart, FaUser, FaSearch } from "react-icons/fa";
 import CartDropdown from "./CartDropdown";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../reducers/authSlice";
-import defaultAvatar from "../assets/defaultAvatar.png";
+import defaultAvatar from "../assets/defaultAvatar2.png";
 import UserMenu from "./UserMenu";
 
 const Header = () => {
@@ -12,6 +12,12 @@ const Header = () => {
   const { fullName, token, avatar } = useSelector((state) => state.auth);
 
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+
+  const [userAvatar, setUserAvatar] = useState(avatar || defaultAvatar);
+
+  useEffect(() => {
+    setUserAvatar(avatar || defaultAvatar);
+}, [avatar]);
 
   const toggleUserMenu = () => {
     setIsUserMenuOpen(!isUserMenuOpen);
@@ -99,7 +105,7 @@ const Header = () => {
             <div className="relative user-menu">
             <div className="relative group">
               <img
-                src={avatar || defaultAvatar}
+                src={userAvatar}
                 alt="Avatar"
                 className="w-8 h-8 rounded-full cursor-pointer"
                 onClick={toggleUserMenu}

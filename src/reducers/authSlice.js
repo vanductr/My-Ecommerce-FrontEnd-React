@@ -1,10 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import { updateUser as updateUserApi } from '../api/userApi';
 
 export const registerUser = createAsyncThunk('auth/registerUser', async (userData, { rejectWithValue }) => {
   try {
-    const response = await axios.post('http://localhost:8080/api.myservice.com/v1/register', userData);
+    const response = await axios.post('http://localhost:8080/api.myservice.com/v1/auth/sign-up', userData);
     return response.data;
   } catch (error) {
     if (error.response && error.response.status === 409) {
@@ -31,9 +32,12 @@ export const loginUser = createAsyncThunk('auth/loginUser', async (userData, { r
 });
 
 export const checkToken = createAsyncThunk('auth/checkToken', async (_, { rejectWithValue }) => {
+    const token = Cookies.get('token');
+    if (!token) {
+      return rejectWithValue({ message: 'No token found', silent: true });
+    }
+  
     try {
-      const token = Cookies.get('token');
-      if (!token) throw new Error('No token found');
       const response = await axios.get('http://localhost:8080/api.myservice.com/v1/user/account', {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -45,22 +49,20 @@ export const checkToken = createAsyncThunk('auth/checkToken', async (_, { reject
     }
   });
 
-  export const updateUser = createAsyncThunk('auth/updateUser', async ({ token, fullName, phone, address }, { rejectWithValue }) => {
+  export const updateUser = createAsyncThunk('auth/updateUser', async ({ token, fullName, phone, address, avatar, email }, { rejectWithValue }) => {
     try {
-      const response = await axios.put('http://localhost:8080/api.myservice.com/v1/user', {
-        fullName,
-        phone,
-        address,
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await updateUserApi(token, { fullName, phone, address, avatar, email });
       return response.data;
+      
     } catch (error) {
       return rejectWithValue({ message: 'Failed to update profile' });
     }
-  });  
+  });
+
+export const logoutUser = createAsyncThunk('auth/logoutUser', async (_, { dispatch }) => {
+  Cookies.remove('token');
+  dispatch(logout());
+});
 
 const authSlice = createSlice({
   name: 'auth',
@@ -86,7 +88,7 @@ const authSlice = createSlice({
       state.avatar = null;
       state.phone = null;
       state.address = null;
-      Cookies.remove('token');
+      state.status = 'idle'; // Cập nhật trạng thái về 'idle'
     },
   },
   extraReducers: (builder) => {
@@ -134,9 +136,13 @@ const authSlice = createSlice({
         state.phone = action.payload.phone;
         state.address = action.payload.address;
       })
-      .addCase(checkToken.rejected, (state) => {
-        state.status = 'failed';
-        state.error = 'Invalid token';
+      .addCase(checkToken.rejected, (state, action) => {
+        if (action.payload.silent) {
+          state.status = 'idle';
+        } else {
+          state.status = 'failed';
+          state.error = action.payload ? action.payload.message : action.error.message;
+        }
       })
       .addCase(updateUser.pending, (state) => {
         state.status = 'loading';
@@ -146,10 +152,17 @@ const authSlice = createSlice({
         state.fullName = action.payload.fullName;
         state.phone = action.payload.phone;
         state.address = action.payload.address;
+        state.avatar = action.payload.avatar; // cập nhật avatar
       })
       .addCase(updateUser.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload ? action.payload.message : action.error.message;
+      })
+      .addCase(logoutUser.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.status = 'idle';
       });
   }
 });

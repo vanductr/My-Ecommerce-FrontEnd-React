@@ -37,8 +37,3 @@ const App = () => {
 };
 
 export default App;
-
-
-// Thực hiện thay đổi Code trên nhánh mới. Để tránh việc mất mã nguồn trước đó.
-
-// Thực hiện cập nhật và phát triển các tính năng liên quan đến người dùng và thông tin của họ

@@ -1,15 +1,20 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateUser } from '../reducers/authSlice';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import defaultAvatar from '../assets/defaultAvatar.png';
+import defaultAvatar from '../assets/defaultAvatar2.png';
 
 const EditProfileModal = ({ closeModal }) => {
   const dispatch = useDispatch();
   const { fullName, email, avatar, phone, address, token } = useSelector((state) => state.auth);
-  const [formData, setFormData] = useState({ fullName, email, avatar, phone, address });
+  const [formData, setFormData] = useState({ fullName, email, phone, address });
   const [selectedFile, setSelectedFile] = useState(null);
+  const [preview, setPreview] = useState(avatar || defaultAvatar);
+
+  useEffect(() => {
+    setPreview(avatar || defaultAvatar);
+  }, [avatar]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,16 +25,20 @@ const EditProfileModal = ({ closeModal }) => {
   };
 
   const handleFileChange = (e) => {
-    setSelectedFile(e.target.files[0]);
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      setPreview(URL.createObjectURL(file));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const updatedData = { ...formData };
     if (selectedFile) {
-      // Upload file logic here
-      // Assuming the uploaded file URL is returned and set to updatedData.avatar
+      updatedData.avatar = selectedFile;
     }
+
     try {
       await dispatch(updateUser({ token, ...updatedData })).unwrap();
       toast.success('Profile updated successfully');
@@ -92,15 +101,13 @@ const EditProfileModal = ({ closeModal }) => {
               onChange={handleFileChange}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none"
             />
-            {selectedFile && (
-              <div className="mt-2">
-                <img
-                  src={URL.createObjectURL(selectedFile)}
-                  alt="Selected Avatar"
-                  className="w-32 h-32 rounded-full"
-                />
-              </div>
-            )}
+            <div className="mt-2">
+              <img
+                src={preview}
+                alt="Selected Avatar"
+                className="w-32 h-32 rounded-full"
+              />
+            </div>
           </div>
           <div className="flex justify-end space-x-4">
             <button
