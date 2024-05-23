@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { FaUserEdit, FaLock, FaConciergeBell, FaBell, FaClipboardList, FaQuestionCircle } from 'react-icons/fa';
-import defaultAvatar from '../assets/defaultAvatar.png';
+import defaultAvatar from '../assets/defaultAvatar2.png';
 import EditProfileModal from '../components/EditProfileModal';
 
 const ProfilePage = () => {
