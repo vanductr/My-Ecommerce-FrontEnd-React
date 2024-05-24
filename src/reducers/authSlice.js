@@ -89,6 +89,7 @@ const authSlice = createSlice({
       state.phone = null;
       state.address = null;
       state.status = 'idle'; // Cập nhật trạng thái về 'idle'
+      Cookies.remove('token');
     },
   },
   extraReducers: (builder) => {
