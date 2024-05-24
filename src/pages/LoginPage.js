@@ -11,7 +11,7 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
   const dispatch = useDispatch();
-  const { status, error, token } = useSelector((state) => state.auth);
+  const { status, error, token, roles } = useSelector((state) => state.auth);
   const navigate = useNavigate();
 
   const handleLogin = (e) => {
@@ -24,17 +24,18 @@ const LoginPage = () => {
     if (status === 'succeeded' && token) {
       toast.success('Đã đăng nhập thành công');
       setTimeout(() => {
-        navigate('/');
+        if (roles.includes('ROLE_ADMIN')) {
+          navigate('/admin/dashboard');
+        } else {
+          navigate('/');
+        }
       }, 1500); // Đợi 1.5 giây trước khi chuyển hướng
     } else if (status === 'failed') {
       if (error === 'Invalid username or password') {
         setErrors({ login: 'Tài khoản hoặc mật khẩu không chính xác' });
       } 
-    //   else {
-    //     toast.error(error);
-    //   }
     }
-  }, [status, token, error, navigate]);
+  }, [status, token, error, navigate, roles]);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">

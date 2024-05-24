@@ -1,0 +1,85 @@
+/* src/styles/global.css */
+
+.modal-overlay {
+  background: rgba(0, 0, 0, 0.75);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  max-width: 500px;
+  width: 100%;
+  position: relative;
+}
+
+/* 
+body {
+  font-family: 'Arial', sans-serif;
+} */
+
+.bg-gray-800 {
+  background-color: #2d3748;
+}
+
+.text-white {
+  color: #fff;
+}
+
+.min-h-screen {
+  min-height: 100vh;
+}
+
+.flex {
+  display: flex;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.mt-10 {
+  margin-top: 2.5rem;
+}
+
+.w-64 {
+  width: 16rem;
+}
+
+/* .py-2.5 {
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+} */
+
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.hover\:bg-gray-700:hover {
+  background-color: #4a5568;
+}
+
+.rounded-full {
+  border-radius: 9999px;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+}
